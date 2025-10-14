@@ -1,0 +1,8 @@
+2025-10-13 23:43:05,231 - INFO - Starting Alpaca order data download...
+2025-10-13 23:43:05,646 - INFO - Alpaca client initialized successfully
+2025-10-13 23:43:05,647 - INFO - Date range: 2025-10-06 to 2025-10-13
+2025-10-13 23:43:05,647 - INFO - Fetching orders from Alpaca API...
+2025-10-13 23:43:06,345 - INFO - Successfully fetched 500 orders
+2025-10-13 23:43:06,364 - INFO - Orders data exported to CSV: alpaca_orders_20251013_234306.csv
+2025-10-13 23:43:06,396 - INFO - Orders data exported to JSON: alpaca_orders_20251013_234306.json
+2025-10-13 23:43:06,398 - INFO - Order data download completed successfully

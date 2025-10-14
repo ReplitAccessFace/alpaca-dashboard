@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: alpaca-dashboard
+    env: docker
+    dockerfilePath: ./Dockerfile
+    envVars:
+      - key: ALPACA_KEY
+        sync: false
+      - key: ALPACA_SECRET
+        sync: false
+      - key: ALPACA_BASE_URL
+        value: https://paper-api.alpaca.markets
+      - key: NODE_ENV
+        value: production
+    healthCheckPath: /health
+    autoDeploy: true

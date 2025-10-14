@@ -1,0 +1,71 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: alpaca-backend
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      - ALPACA_KEY=${ALPACA_KEY}
+      - ALPACA_SECRET=${ALPACA_SECRET}
+      - ALPACA_BASE_URL=${ALPACA_BASE_URL:-https://paper-api.alpaca.markets}
+      - DATABASE_PATH=/app/data/trades.db
+      - MARKET_DATA_DB_PATH=/app/data/market_data.db
+    volumes:
+      - ./data:/app/data
+      - ./logs:/app/logs
+    networks:
+      - alpaca-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  frontend:
+    build:
+      context: ./src
+      dockerfile: Dockerfile
+    container_name: alpaca-frontend
+    restart: unless-stopped
+    ports:
+      - "3000:80"
+    environment:
+      - REACT_APP_API_URL=${REACT_APP_API_URL:-http://localhost:8000}
+      - NODE_ENV=production
+    depends_on:
+      backend:
+        condition: service_healthy
+    networks:
+      - alpaca-network
+
+  nginx:
+    image: nginx:alpine
+    container_name: alpaca-nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx/conf.d:/etc/nginx/conf.d
+      - ./ssl:/etc/nginx/ssl
+      - ./logs/nginx:/var/log/nginx
+    depends_on:
+      - backend
+      - frontend
+    networks:
+      - alpaca-network
+
+networks:
+  alpaca-network:
+    driver: bridge
+
+volumes:
+  data:
+  logs:
