@@ -3,14 +3,15 @@ FROM node:18-alpine as build
 
 WORKDIR /app
 
-# Copy package files
+# Copy package files from root directory
 COPY package*.json ./
 
 # Install dependencies
-RUN npm ci --only=production
+RUN npm ci
 
 # Copy source code
-COPY . .
+COPY src/ ./src/
+COPY public/ ./public/
 
 # Build the application
 RUN npm run build
